@@ -1,6 +1,6 @@
 # AI驾驶员行为模拟系统
 
-一个基于Flask和Ollama的驾驶员行为模拟系统，通过大模型分析用户画像和驾驶情境，实时生成驾驶员的心理活动、驾驶动作和情绪指标。
+一个基于Flask和Ollama-deepseekR1的驾驶员行为模拟系统，通过大模型分析用户画像和驾驶情境，实时生成驾驶员的心理活动、驾驶动作和情绪指标。
 
 ## 功能特点
 
@@ -83,9 +83,12 @@ AI4D-HB2/
 - 确保Ollama服务正常运行
 - 首次使用可能需要等待模型加载
 - 建议使用现代浏览器以获得最佳体验
+- 
+<img width="1685" height="944" alt="image" src="https://github.com/user-attachments/assets/f25cb72f-0bac-43bb-a477-be7d342eba5d" />
 
 <img width="1670" height="942" alt="image" src="https://github.com/user-attachments/assets/96c2eef2-debd-4a51-9629-a4a053a90df5" />
 
 <img width="1685" height="935" alt="image" src="https://github.com/user-attachments/assets/344cca71-f88e-4ddb-a46b-355c45dd0939" />
 
+[Uploading （已压缩）人工智能ai4.pdf…]()
 
