@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI驾驶员行为模拟系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧面板：用户画像和情景编辑器 -->
+        <div class="left-panel">
+            <!-- 用户画像编辑器 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    用户画像编辑器
+                </h2>
+                <form id="userProfileForm">
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" id="name" name="name" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label>年龄</label>
+                        <input type="number" id="age" name="age" placeholder="请输入年龄" min="18" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>职业</label>
+                        <input type="text" id="occupation" name="occupation" placeholder="请输入职业">
+                    </div>
+                    <div class="form-group">
+                        <label>驾驶年龄</label>
+                        <input type="number" id="driving_years" name="driving_years" placeholder="年" min="0" max="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>性格特征（大五人格）</label>
+                        <div class="personality-container">
+                            <canvas id="personalityRadar" class="personality-radar"></canvas>
+                            <div class="personality-grid">
+                                <div class="personality-item">
+                                    <label>宜人性</label>
+                                    <input type="range" id="agreeableness" min="0" max="10" value="5" class="slider">
+                                    <span class="slider-value" id="agreeableness-value">5</span>
+                                </div>
+                                <div class="personality-item">
+                                    <label>尽责性</label>
+                                    <input type="range" id="conscientiousness" min="0" max="10" value="5" class="slider">
+                                    <span class="slider-value" id="conscientiousness-value">5</span>
+                                </div>
+                                <div class="personality-item">
+                                    <label>神经质</label>
+                                    <input type="range" id="neuroticism" min="0" max="10" value="5" class="slider">
+                                    <span class="slider-value" id="neuroticism-value">5</span>
+                                </div>
+                                <div class="personality-item">
+                                    <label>开放性</label>
+                                    <input type="range" id="openness" min="0" max="10" value="5" class="slider">
+                                    <span class="slider-value" id="openness-value">5</span>
+                                </div>
+                                <div class="personality-item">
+                                    <label>外倾性</label>
+                                    <input type="range" id="extraversion" min="0" max="10" value="5" class="slider">
+                                    <span class="slider-value" id="extraversion-value">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>用户文档上传</label>
+                        <div class="file-upload-container">
+                            <input type="file" id="user_document" name="user_document" accept=".txt,.doc,.docx,.pdf" class="file-input">
+                            <label for="user_document" class="file-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span class="file-text">点击选择文件或拖拽文件到此处</span>
+                                <span class="file-name" id="file-name"></span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 情景编辑器 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-road"></i>
+                    情景编辑器
+                </h2>
+                <form id="scenarioForm">
+                    <div class="form-group">
+                        <label>预设天气</label>
+                        <div class="weather-icons">
+                            <div class="weather-icon" data-weather="晴天">
+                                <i class="fas fa-sun"></i>
+                                <span>晴天</span>
+                            </div>
+                            <div class="weather-icon" data-weather="多云">
+                                <i class="fas fa-cloud"></i>
+                                <span>多云</span>
+                            </div>
+                            <div class="weather-icon" data-weather="雨天">
+                                <i class="fas fa-cloud-rain"></i>
+                                <span>雨天</span>
+                            </div>
+                            <div class="weather-icon" data-weather="雪天">
+                                <i class="fas fa-snowflake"></i>
+                                <span>雪天</span>
+                            </div>
+                            <div class="weather-icon" data-weather="雾天">
+                                <i class="fas fa-smog"></i>
+                                <span>雾天</span>
+                            </div>
+                            <div class="weather-icon" data-weather="夜间">
+                                <i class="fas fa-moon"></i>
+                                <span>夜间</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="weather" name="weather" value="晴天">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>驾驶事件</label>
+                        <input type="text" id="random_event" name="random_event" class="select-input" placeholder="请输入驾驶事件，例如：前方车辆突然变道">
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 中间面板：可视化区域 -->
+        <div class="center-panel">
+            <div class="background-image"></div>
+            <canvas id="particleCanvas"></canvas>
+            <div class="response-input-container">
+                <label for="ai_response" class="response-label">
+                    <i class="fas fa-comment-dots"></i>
+                    AI场景响应语句
+                </label>
+                <textarea id="ai_response" name="ai_response" class="response-input" rows="5" placeholder="请输入AI在该场景的响应语句，例如：前方有车辆突然变道，请保持冷静并减速慢性..."></textarea>
+            </div>
+            <button id="generateBtn" class="generate-btn">
+                <i class="fas fa-play"></i>
+                <span>生成模拟</span>
+            </button>
+        </div>
+        
+        <!-- 右侧面板：实时反馈 -->
+        <div class="right-panel">
+            <h2 class="panel-title">
+                <i class="fas fa-chart-line"></i>
+                实时模拟反馈
+            </h2>
+            
+            <!-- 心理活动 -->
+            <div class="feedback-section">
+                <h3 class="feedback-title">
+                    <i class="fas fa-brain"></i>
+                    心理活动
+                </h3>
+                <div id="mentalActivity" class="mental-activity">
+                    等待生成模拟...
+                </div>
+            </div>
+            
+            <!-- 驾驶动作 -->
+            <div class="feedback-section">
+                <h3 class="feedback-title">
+                    <i class="fas fa-car"></i>
+                    驾驶动作
+                </h3>
+                <div id="drivingActions" class="driving-actions">
+                    <div class="action-placeholder">暂无动作</div>
+                </div>
+            </div>
+            
+            <!-- 情绪仪表盘 -->
+            <div class="feedback-section">
+                <h3 class="feedback-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    情绪仪表盘
+                </h3>
+                <div class="emotion-dashboard">
+                    <div class="emotion-gauge">
+                        <div class="gauge-label">冷静度</div>
+                        <div class="gauge-container">
+                            <div class="gauge-fill" id="calmness-gauge" style="width: 50%"></div>
+                        </div>
+                        <div class="gauge-value" id="calmness-value">50</div>
+                    </div>
+                    <div class="emotion-gauge">
+                        <div class="gauge-label">警觉度</div>
+                        <div class="gauge-container">
+                            <div class="gauge-fill" id="alertness-gauge" style="width: 50%"></div>
+                        </div>
+                        <div class="gauge-value" id="alertness-value">50</div>
+                    </div>
+                    <div class="emotion-gauge">
+                        <div class="gauge-label">压力度</div>
+                        <div class="gauge-container">
+                            <div class="gauge-fill" id="stress-gauge" style="width: 50%"></div>
+                        </div>
+                        <div class="gauge-value" id="stress-value">50</div>
+                    </div>
+                    <div class="emotion-gauge">
+                        <div class="gauge-label">自信度</div>
+                        <div class="gauge-container">
+                            <div class="gauge-fill" id="confidence-gauge" style="width: 50%"></div>
+                        </div>
+                        <div class="gauge-value" id="confidence-value">50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
+
