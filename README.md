@@ -84,3 +84,8 @@ AI4D-HB2/
 - 首次使用可能需要等待模型加载
 - 建议使用现代浏览器以获得最佳体验
 
+<img width="1670" height="942" alt="image" src="https://github.com/user-attachments/assets/96c2eef2-debd-4a51-9629-a4a053a90df5" />
+
+<img width="1685" height="935" alt="image" src="https://github.com/user-attachments/assets/344cca71-f88e-4ddb-a46b-355c45dd0939" />
+
+
